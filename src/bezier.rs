@@ -11,10 +11,10 @@ use serde::*;
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde-serialize", derive(Serialize, Deserialize))]
 pub struct BezierCurve<N: CurveScalar> {
-    v0: Vector3<N>,
-    v1: Vector3<N>,
-    v2: Vector3<N>,
-    v3: Vector3<N>,
+    pub v0: Vector3<N>,
+    pub v1: Vector3<N>,
+    pub v2: Vector3<N>,
+    pub v3: Vector3<N>,
 }
 
 impl<N: CurveScalar> Curve<N> for BezierCurve<N> {
