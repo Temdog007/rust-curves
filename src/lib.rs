@@ -1,35 +1,28 @@
 use nalgebra::*;
-use num_traits::*;
 
 pub mod linear;
 pub use linear::*;
 
-pub trait Curve<N: CurveScalar> {
-    fn get_point(&self, t: N) -> Vector3<N>;
+pub mod catmull_rom;
+pub use catmull_rom::*;
 
-    fn get_points(&self, count: usize) -> Vec<Vector3<N>> {
-        (0..count)
-            .map(|i| {
-                let t = N::from_usize(i).unwrap() / N::from_usize(count).unwrap();
-                self.get_point(t)
-            })
-            .collect()
-    }
+pub mod curve;
+pub use curve::*;
 
-    fn valid(&self) -> bool;
+pub(crate) fn get_x<N: CurveScalar>(v: &Vector3<N>) -> N {
+    unsafe { *v.get_unchecked(0) }
+}
+pub(crate) fn get_y<N: CurveScalar>(v: &Vector3<N>) -> N {
+    unsafe { *v.get_unchecked(1) }
+}
+pub(crate) fn get_z<N: CurveScalar>(v: &Vector3<N>) -> N {
+    unsafe { *v.get_unchecked(2) }
 }
 
-pub trait CurveScalar:
-    Scalar
-    + Float
-    + One
-    + SimdComplexField<SimdRealField = Self>
-    + RealField
-    + FromPrimitive
-    + ToPrimitive
-     
-{
+pub(crate) fn distance<N: CurveScalar>(a: &Vector3<N>, b: &Vector3<N>) -> N {
+    (a - b).norm()
 }
 
-impl CurveScalar for f32 {}
-impl CurveScalar for f64 {}
+pub(crate) fn distance_squared<N: CurveScalar>(a: &Vector3<N>, b: &Vector3<N>) -> N {
+    (a - b).norm_squared()
+}

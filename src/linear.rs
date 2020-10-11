@@ -7,14 +7,14 @@ use serde::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde-serialize", derive(Serialize, Deserialize))]
-pub struct Linear<N: CurveScalar> {
+pub struct LinearCurve<N: CurveScalar> {
     pub start: Vector3<N>,
     pub end: Vector3<N>,
 }
 
-impl<N: CurveScalar> Curve<N> for Linear<N> {
-    fn get_point(&self, t: N) -> Vector3<N> {
-        self.start.scale(N::one() - t) + (&self.end.scale(t))
+impl<N: CurveScalar> Curve<N> for LinearCurve<N> {
+    fn get_point_mut(&self, t: N, v: &mut Vector3<N>) {
+        *v = self.start.scale(N::one() - t) + (&self.end.scale(t))
     }
     fn valid(&self) -> bool {
         self.start != self.end
@@ -27,7 +27,7 @@ mod test {
 
     #[test]
     fn test1() {
-        let curve = Linear {
+        let curve = LinearCurve {
             start: Vector3::zeros(),
             end: Vector3::from_element(1f32),
         };
@@ -38,7 +38,7 @@ mod test {
             assert_eq!(curve.get_point(t), Vector3::from_element(t));
         }
 
-        let curve = Linear {
+        let curve = LinearCurve {
             start: Vector3::zeros(),
             end: Vector3::from_element(1f64),
         };
@@ -55,7 +55,7 @@ mod test {
 
     #[test]
     fn test2() {
-        let curve: Linear<f64> = Linear {
+        let curve: LinearCurve<f64> = LinearCurve {
             start: Vector3::zeros(),
             end: Vector3::zeros(),
         };
