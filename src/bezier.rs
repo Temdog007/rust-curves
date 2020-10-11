@@ -20,7 +20,7 @@ pub struct BezierCurve<N: CurveScalar> {
 impl<N: CurveScalar> Curve<N> for BezierCurve<N> {
     fn valid(&self) -> bool {
         let arr = [self.v0, self.v1, self.v2, self.v3];
-        (1..arr.len()).any(|i| arr[i..].contains(&arr[i - 1]))
+        !(1..arr.len()).any(|i| arr[i..].contains(&arr[i - 1]))
     }
     fn get_point_mut(&self, t: N, v: &mut Vector3<N>) {
         *v = Vector3::new(
