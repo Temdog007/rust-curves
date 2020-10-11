@@ -80,7 +80,7 @@ mod test {
     use cgmath::assert_relative_eq;
 
     #[test]
-    fn test() {
+    fn test_points() {
         let curve = EllipseCurve::<f32>::default();
         let mut curve2 = curve;
         curve2.rotation = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), f32::frac_pi_2());
@@ -93,5 +93,12 @@ mod test {
             assert_eq!(curve.get_point(t), v, "Angle {} Index {}", angle, i);
             assert_relative_eq!(curve2.get_point(t), v2, epsilon = 1e-4f32);
         }
+    }
+
+    #[test]
+    fn test_length() {
+        let curve = EllipseCurve::<f32>::default();
+
+        assert_relative_eq!(curve.get_length(512), f32::pi() * 2f32, epsilon = 1e-4f32);
     }
 }
