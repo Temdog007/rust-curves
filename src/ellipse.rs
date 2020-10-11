@@ -16,7 +16,7 @@ pub struct EllipseCurve<N: CurveScalar> {
     pub start_angle: N,
     pub end_angle: N,
     pub clockwise: bool,
-    pub rotation: N,
+    pub rotation: UnitQuaternion<N>,
 }
 
 impl<N: CurveScalar> Default for EllipseCurve<N> {
@@ -29,7 +29,7 @@ impl<N: CurveScalar> Default for EllipseCurve<N> {
             start_angle: N::zero(),
             end_angle: N::two_pi(),
             clockwise: false,
-            rotation: N::zero(),
+            rotation: UnitQuaternion::identity(),
         }
     }
 }
@@ -65,34 +65,30 @@ impl<N: CurveScalar> Curve<N> for EllipseCurve<N> {
         let x = self.x + self.x_radius * Float::cos(angle);
         let y = self.y + self.y_radius * Float::sin(angle);
 
-        let (x, y) = if self.rotation == N::zero() {
-            (x, y)
-        } else {
-            let cos = Float::cos(self.rotation);
-            let sin = Float::sin(self.rotation);
-
-            let tx = x - self.x;
-            let ty = y - self.y;
-            (tx * cos - ty * sin + self.x, tx * sin + ty * cos + self.y)
-        };
-
-        *v = Vector3::new(x, y, N::zero())
+        *v = self
+            .rotation
+            .transform_vector(&Vector3::new(x, y, N::zero()))
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+    use cgmath::assert_relative_eq;
 
     #[test]
     fn test() {
         let curve = EllipseCurve::<f32>::default();
+        let mut curve2 = curve;
+        curve2.rotation = UnitQuaternion::from_axis_angle(&Vector3::x_axis(), f32::frac_pi_2());
 
         for i in 0..16 {
             let t = i as f32 / 16f32;
             let angle = f32::two_pi() * t;
             let v = Vector3::new(angle.cos(), angle.sin(), 0f32);
+            let v2 = Vector3::new(angle.cos(), 0f32, angle.sin());
             assert_eq!(curve.get_point(t), v, "Angle {} Index {}", angle, i);
+            assert_relative_eq!(curve2.get_point(t), v2, epsilon = 1e-4f32);
         }
     }
 }

@@ -24,6 +24,7 @@ impl<N: CurveScalar> Curve<N> for LinearCurve<N> {
 #[cfg(test)]
 mod test {
     use super::*;
+    use cgmath::assert_relative_eq;
 
     #[test]
     fn test_get_point() {
@@ -72,12 +73,7 @@ mod test {
 
         for i in 2..100 {
             let len = curve.get_length(i);
-            assert!(
-                (len - 1f32).abs() < 1e-4f32,
-                "Failed for {}. Length = {}",
-                i,
-                len
-            );
+            assert_relative_eq!(len, 1f32, epsilon = 1e-4f32);
         }
     }
 

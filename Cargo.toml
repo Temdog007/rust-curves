@@ -9,6 +9,9 @@ nalgebra = "0.22.0"
 num-traits = "0.2.12"
 serde ={version="1.0.116", features=["serde_derive"], optional = true}
 
+[dev-dependencies]
+cgmath = "0.17.0"
+
 [features]
 default = []
 serde-serialize = ["serde"]
