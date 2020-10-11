@@ -12,6 +12,7 @@ pub trait Curve<N: CurveScalar> {
     fn get_point_mut(&self, t: N, v: &mut Vector3<N>);
 
     fn get_tangent(&self, t: N, delta: N) -> Vector3<N> {
+        debug_assert!(self.valid());
         let mut t1 = t - delta;
         let mut t2 = t + delta;
 
@@ -25,6 +26,16 @@ pub trait Curve<N: CurveScalar> {
         let pt1 = self.get_point(t1);
         let pt2 = self.get_point(t2);
         (pt2 - pt1).normalize()
+    }
+
+    fn get_length(&self, divisions: usize) -> N {
+        debug_assert!(self.valid());
+        let n = N::from_usize(divisions).unwrap();
+        (1..divisions).fold(N::from_usize(0).unwrap(), |acc, index| {
+            let t = N::from_usize(index).unwrap() / n;
+            let p = N::from_usize(index - 1).unwrap() / n;
+            acc + crate::distance(&self.get_point(t), &self.get_point(p))
+        })
     }
 
     fn valid(&self) -> bool;
