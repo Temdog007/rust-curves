@@ -12,6 +12,9 @@ pub use curve::*;
 pub mod ellipse;
 pub use ellipse::*;
 
+pub mod bezier;
+pub use bezier::*;
+
 pub(crate) fn get_x<N: CurveScalar>(v: &Vector3<N>) -> N {
     unsafe { *v.get_unchecked(0) }
 }
