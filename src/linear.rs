@@ -44,9 +44,12 @@ mod test {
         };
 
         assert!(curve.valid());
+        let points = curve.get_points(10);
         for i in 0..10 {
             let t = i as f64 / 10f64;
-            assert_eq!(curve.get_point(t), Vector3::from_element(t));
+            let point = curve.get_point(t);
+            assert_eq!(points[i], point);
+            assert_eq!(point, Vector3::from_element(t));
         }
     }
 
