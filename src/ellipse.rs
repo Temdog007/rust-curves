@@ -6,7 +6,7 @@ use num_traits::*;
 
 use super::*;
 
-#[cfg(feature = "seride-serialize")]
+#[cfg(feature = "serde-serialize")]
 use serde::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
