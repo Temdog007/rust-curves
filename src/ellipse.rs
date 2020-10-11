@@ -1,3 +1,6 @@
+// Code transpiled from Three JS
+// https://github.com/mrdoob/three.js/blob/dev/src/extras/curves/EllipseCurve.js
+
 use nalgebra::*;
 use num_traits::*;
 
