@@ -10,14 +10,14 @@ use serde::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde-serialize", derive(Serialize, Deserialize))]
-pub struct Bezier<N: CurveScalar> {
+pub struct BezierCurve<N: CurveScalar> {
     v0: Vector3<N>,
     v1: Vector3<N>,
     v2: Vector3<N>,
     v3: Vector3<N>,
 }
 
-impl<N: CurveScalar> Curve<N> for Bezier<N> {
+impl<N: CurveScalar> Curve<N> for BezierCurve<N> {
     fn valid(&self) -> bool {
         let arr = [self.v0, self.v1, self.v2, self.v3];
         (1..arr.len()).any(|i| arr[i..].contains(&arr[i - 1]))
