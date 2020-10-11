@@ -1,6 +1,18 @@
 use nalgebra::*;
 use num_traits::*;
 
+pub fn get_points<'a, N: CurveScalar, C: Curve<N>>(
+    curve: &'a C,
+    divisions: usize,
+) -> impl Iterator<Item = Vector3<N>> + 'a {
+    assert!(divisions > 0);
+    let n = N::from_usize(divisions).unwrap();
+    (0..divisions).map(move |i| {
+        let t = N::from_usize(i).unwrap() / n;
+        curve.get_point(t)
+    })
+}
+
 pub trait Curve<N: CurveScalar> {
     fn get_point(&self, t: N) -> Vector3<N> {
         debug_assert!(self.valid());
@@ -30,12 +42,18 @@ pub trait Curve<N: CurveScalar> {
 
     fn get_length(&self, divisions: usize) -> N {
         debug_assert!(self.valid());
+        assert!(divisions > 1);
         let n = N::from_usize(divisions).unwrap();
-        (1..divisions).fold(N::from_usize(0).unwrap(), |acc, index| {
-            let t = N::from_usize(index).unwrap() / n;
-            let p = N::from_usize(index - 1).unwrap() / n;
-            acc + crate::distance(&self.get_point(t), &self.get_point(p))
-        })
+        (1..=divisions)
+            .fold(
+                (N::from_usize(0).unwrap(), self.get_point(N::zero())),
+                |(acc, previous), index| {
+                    let t = N::from_usize(index).unwrap() / n;
+                    let current = self.get_point(t);
+                    (acc + crate::distance(&current, &previous), current)
+                },
+            )
+            .0
     }
 
     fn valid(&self) -> bool;
