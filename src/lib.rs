@@ -32,8 +32,18 @@ pub(crate) fn distance<N: CurveScalar>(a: &Vector3<N>, b: &Vector3<N>) -> N {
 pub(crate) fn distance_squared<N: CurveScalar>(a: &Vector3<N>, b: &Vector3<N>) -> N {
     (a - b).norm_squared()
 }
+pub trait PointContainer<N: CurveScalar>:
+    std::ops::Index<usize, Output = Vector3<N>> + std::ops::IndexMut<usize, Output = Vector3<N>>
+{
+    fn add_point(&mut self, t: Vector3<N>);
+    fn point_count(&self) -> usize;
+}
 
-pub trait Container<T> : std::ops::Index<usize, Output=T> + std::ops::IndexMut<usize, Output=T> {
-    fn push(&mut self, t: T);
-    fn len(&self) -> usize;
+impl<N: CurveScalar> PointContainer<N> for Vec<Vector3<N>> {
+    fn add_point(&mut self, t : Vector3<N>){
+        self.push(t);
+    }
+    fn point_count(&self) -> usize{
+        self.len()
+    }
 }

@@ -11,16 +11,16 @@ use serde::*;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde-serialize", derive(Serialize, Deserialize))]
-pub struct CatmullRomCurve<C : Container<Vector3<N>>, N: CurveScalar> {
+pub struct CatmullRomCurve<C: PointContainer<N>, N: CurveScalar> {
     pub curve_type: CatmullRomCurveType,
     pub points: C,
     pub closed: bool,
     pub tension: N,
 }
 
-impl<C : Container<Vector3<N>>,N: CurveScalar> Curve<N> for CatmullRomCurve<C, N> {
+impl<C: PointContainer<N>, N: CurveScalar> Curve<N> for CatmullRomCurve<C, N> {
     fn get_point_mut(&self, t: N, v: &mut Vector3<N>) {
-        let len = N::from_usize(self.points.len()).unwrap();
+        let len = N::from_usize(self.points.point_count()).unwrap();
         let p = (len - (if self.closed { N::zero() } else { N::one() })) * t;
         let mut init_point: N = Float::floor(p);
         let mut weight = p - init_point;
@@ -140,7 +140,7 @@ impl<C : Container<Vector3<N>>,N: CurveScalar> Curve<N> for CatmullRomCurve<C, N
         *v = Vector3::new(px.calc(weight), py.calc(weight), pz.calc(weight))
     }
     fn valid(&self) -> bool {
-        !self.points.len() > 3
+        !self.points.point_count() > 3
     }
 }
 
