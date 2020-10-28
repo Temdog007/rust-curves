@@ -11,14 +11,14 @@ use serde::*;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde-serialize", derive(Serialize, Deserialize))]
-pub struct CatmullRomCurve<N: CurveScalar> {
+pub struct CatmullRomCurve<C : Container<Vector3<N>>, N: CurveScalar> {
     pub curve_type: CatmullRomCurveType,
-    pub points: Vec<Vector3<N>>,
+    pub points: C,
     pub closed: bool,
     pub tension: N,
 }
 
-impl<N: CurveScalar> Curve<N> for CatmullRomCurve<N> {
+impl<C : Container<Vector3<N>>,N: CurveScalar> Curve<N> for CatmullRomCurve<C, N> {
     fn get_point_mut(&self, t: N, v: &mut Vector3<N>) {
         let len = N::from_usize(self.points.len()).unwrap();
         let p = (len - (if self.closed { N::zero() } else { N::one() })) * t;
